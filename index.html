@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map and Weather</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
+</head>
+<body>
+    <h1>Map and Weather</h1>
+    <input type="text" id="location" placeholder="Enter a location">
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="map" style="width: 400px; height: 300px;"></div>
+    <div id="weather"></div>
+
+    <script>
+        let map;
+        
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 0, lng: 0},
+                zoom: 8
+            });
+        }
+        
+        function getWeather() {
+            const location = document.getElementById('location').value;
+            
+            fetch(`/weather?location=${location}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.coord) {
+                        map.setCenter(data.coord);
+                        document.getElementById('weather').innerHTML = `Temperature: ${data.main.temp}°C, Description: ${data.weather[0].description}`;
+                    } else {
+                        document.getElementById('weather').innerHTML = 'Location not found.';
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
